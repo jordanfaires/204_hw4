@@ -1,0 +1,88 @@
+---
+title: "hw4"
+author: "Jordan Faires"
+date: "5/21/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+
+# Setting up variables and functions
+
+# Temperature is increasing over time - temp at time t equals min of (tT / 100, T). It rises until T = 100 and flattens out after that. If we know t and T, you can plug in to the equation. t = years from now, T = BAU temperature increase at year 100.
+
+# Save variables to make manipulation easier
+
+# Year
+t <- 50
+
+# BAU temp increase at year 100
+T <- 4.4
+
+# Other paramaters
+B <- 0.05
+g <- 0.01
+o <- 0.005
+n <- 0.5
+
+# Temperature in year T relative to temp at time 0
+
+temp = function(t,T)
+{
+  out = min(t*T/100,T)
+  return(out)
+}
+
+temp(t, T)
+
+# Economic Activity - Activity reduces with heat over time. Fraction of economic activity retained in a year if tempt is r(t):
+
+activity = function(B, temp)
+{
+  out = exp(-B*(temp^2))
+  return(out)
+}
+
+activity(B, temp = temp(t, T))
+
+# Consumption - economic activity growing over time at rate g but reduced by K. total consumption at time t is: 
+
+consumption = function(activity, g, t)
+{
+  out = activity*(exp(g*t))
+  return(out)
+}
+
+consumption(g, t, activity = activity(B, temp = temp(t, T))) 
+
+# Utility - society's utility from consumption 
+
+utility = function(consumption, n)
+{
+  out = ((consumption^(1-n))/(1-n))
+  return(out)
+}
+
+utility(n, consumption = (consumption(g, t, activity = activity(B, temp = temp(t, T)))))
+
+# Discount rate given by Ramsey Rule 
+
+discount = function(o, n, g)
+{
+  out = o + (n*g)
+  return(out)
+}
+
+discount(o, n, g)
+
+
+```
+
