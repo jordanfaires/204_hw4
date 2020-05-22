@@ -33,6 +33,8 @@ g <- 0.01
 o <- 0.005
 n <- 0.5
 
+# Functions 
+
 # Temperature in year T relative to temp at time 0
 
 temp = function(t,T)
