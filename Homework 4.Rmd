@@ -7,7 +7,7 @@ output: html_document
 
 sup!
 
-...........sup? 
+...........sup? TAKE 2 
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -88,6 +88,30 @@ discount = function(o, n, g)
 }
 
 discount(o, n, g)
+
+
+```
+
+```{r}
+
+# Create Vector
+
+years <- c(1:100)
+
+#Create df for years
+
+years.df <- data.frame(years)
+
+#Different variations of applying temp fuction to vector / year df
+
+years2.f <- years.df%>% 
+  mutate(temp = temp(years.df$years))
+
+years.df <- mapply(temp, years.df$years)
+
+df[] <- lapply(years.df, temp(T = 8))
+
+# Seems to be a problem with how the arguments are called - it wants arguments for t and T, but we want the function to use years in the vector or df for t instead of it being given. 
 
 
 ```
