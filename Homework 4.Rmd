@@ -43,8 +43,10 @@ n <- 0.5
 
 temp = function(t,T)
 {
-  out = min(t*T/100,T)
+  out = pmin(t*T/100,T)
   return(out)
+  T = 4
+  t = 100
 }
 
 temp(t, T)
@@ -94,37 +96,28 @@ discount(o, n, g)
 
 ```{r}
 
-# Create Vector
+# Plotting temperature 
 
-years <- c(0:100)
+years <- data.frame(
+  year = seq(from = 0, to = 200, by = 1))
+temp_time <- years %>%
+  mutate(none = temp(t = year, T = 0),
+         moderate = temp(t = year, T = 2),
+         extreme = temp(t = year, T = 8))
 
-temps <- seq(0, 4.4, .044)
+colors <- c("Extreme (T = 8)" = "red3", "Moderate (T = 2)" = "seagreen", "None" = "dodgerblue")
 
-#Create df for years
+ggplot(temp_time, aes(x = year)) +
+  geom_point(aes(y = moderate, color = "Moderate (T = 2)")) + 
+  geom_point(aes(y = extreme, color = "Extreme (T = 8)")) +
+  geom_point(aes(y = none, color = "None")) +
+  theme_minimal() + 
+  labs(x = "Year",
+       y = "Temperature Increase Relative to Year Zero",
+       title = "Temperature Over Time Under Multiple Climate Scenarios",
+       fill = "") 
 
-years.df <- data.frame(years, temps)
+# Renaming legend isn't working with a bunch of different ways to do it - can maybe just remove 
 
-plot(years, temps)
-
-#Different variations of applying temp fuction to vector / year df
-
-years2.f <- years.df%>% 
-  mutate(temp = temp(years.df$years))
-
-years.df <- mapply(temp, years.df$years)
-
-df[] <- lapply(years.df, temp(T = 8))
-
-# Seems to be a problem with how the arguments are called - it wants arguments for t and T, but we want the function to use years in the vector or df for t instead of it being given. 
-
-# I think we need to make a dummy dataset for temperatures over the 100 years and then just plot that, see years.df above? Or maybe I'm not understanding the formula for temperature correctly. I have no idea what you're trying to do here.
-```
-
-```{r}
-# Other idea for plotting temp, not working
-
-x <- seq(0, 200, 1)
-T <- 200
-plot(x, temp(x, T))
 ```
 
