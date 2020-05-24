@@ -26,7 +26,7 @@ library(tidyverse)
 # Save variables to make manipulation easier
 
 # Year
-t <- 50
+t <- 200
 
 # BAU temp increase at year 100
 T <- 4.4
@@ -34,7 +34,7 @@ T <- 4.4
 # Other paramaters
 B <- 0.05
 g <- 0.01
-o <- 0.005
+d <- 0.005
 n <- 0.5
 
 # Functions 
@@ -83,13 +83,13 @@ utility(n, consumption = (consumption(g, t, activity = activity(B, temp = temp(t
 
 # Discount rate given by Ramsey Rule 
 
-discount = function(o, n, g)
+discount = function(d, n, g)
 {
-  out = o + (n*g)
+  out = d + (n*g)
   return(out)
 }
 
-discount(o, n, g)
+r <- discount(d, n, g)
 
 
 ```
@@ -118,6 +118,44 @@ ggplot(temp_time, aes(x = year)) +
        fill = "") 
 
 # Renaming legend isn't working with a bunch of different ways to do it - can maybe just remove 
+
+```
+
+```{r}
+# 2.a
+
+U_disc = function(utility, r, t) {
+  out = (utility/(1+r)^t)
+  return(out)
+}
+
+y <- seq(0, 200, 1)
+
+U_4.4_disc <- sum(U_disc(r, t = y, 
+           utility = 
+             utility(n, consumption = (consumption(g, t = y, activity = activity(B, temp = temp(t = y, T)))))))
+
+U_4.4_indiv <- U_disc(r, t = y, utility = 
+                        utility(n, consumption = (consumption(g, t = y, activity = activity(B, temp = temp(t = y, T))))))
+
+#U_4.4 <- sum(utility(n, consumption = (consumption(g, 0, activity = activity(B, temp = temp(0, T))))):utility(n, consumption = (consumption(g, 200, activity = activity(B, temp = temp(200, T))))))
+
+U_0 <- sum(utility(n, consumption = (consumption(g, t, activity = activity(B, temp = temp(t, T0))))))
+
+L <- (1 - (U_4.4_disc/U_0_disc))*100
+
+# Example NPV fxn: NPV(cf0=100,cf=50,times=3,i=.05)
+
+# 2.b
+
+L_sens_T <- abs((1 - ((utility(n, consumption = (consumption(g, t, activity = activity(B, temp = temp(t, (1.1*T)))))))/U_4.4)) * 100)
+
+L_sens_g <- abs((1 - ((utility(n, consumption = (consumption((1.1*g), t, activity = activity(B, temp = temp(t, T))))))/U_4.4)) * 100)
+
+L_sens_n <- abs((1 - ((utility((1.1*n), consumption = (consumption(g, t, activity = activity(B, temp = temp(t, T))))))/U_4.4)) * 100)
+
+L_sens_B <- abs((1 - ((utility(n, consumption = (consumption(g, t, activity = activity((1.1*B), temp = temp(t, T))))))/U_4.4)) * 100)
+
 
 ```
 
