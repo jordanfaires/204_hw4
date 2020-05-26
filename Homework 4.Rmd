@@ -1,13 +1,11 @@
 ---
-title: "hw4"
-author: "Jordan Faires"
+title: "ESM 204 Homework 4"
+author: "Jordan Faires and Evan Heberlein"
 date: "5/21/2020"
 output: html_document
 ---
 
-sup!
-
-...........sup? TAKE 2 
+1. Plots 
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -94,7 +92,7 @@ r <- discount(d, n, g)
 
 ```
 
-```{r}
+```{r, include = FALSE}
 
 # Plotting temperature 
 
@@ -107,6 +105,10 @@ temp_time <- years %>%
 
 colors <- c("Extreme (T = 8)" = "red3", "Moderate (T = 2)" = "seagreen", "None" = "dodgerblue")
 
+```
+
+a. Plot temperature over time for no climate change, moderate climate change and extreme climate change. 
+```{r}
 ggplot(temp_time, aes(x = year)) +
   geom_point(aes(y = moderate, color = "Moderate (T = 2)")) + 
   geom_point(aes(y = extreme, color = "Extreme (T = 8)")) +
@@ -115,11 +117,84 @@ ggplot(temp_time, aes(x = year)) +
   labs(x = "Year",
        y = "Temperature Increase Relative to Year Zero",
        title = "Temperature Over Time Under Multiple Climate Scenarios",
+       fill = "") + 
+    scale_colour_discrete("Climate Change Scenario")
+```
+
+```{r, include = FALSE}
+
+#Plotting Consumption
+
+#Calculating activity (in order to be able to calculate consumption)
+
+activity_time <- temp_time %>%
+  mutate(act_none = activity(B = .05 , temp = none),
+         act_moderate = activity(B = .05 , temp = moderate),
+         act_extreme = activity(B = .05 , temp = extreme))
+
+#Calculating consumption
+
+consumption_time <- activity_time %>% 
+    mutate(con_none = consumption(activity = act_none, g = .01, t = year),
+         con_moderate = consumption(activity = act_moderate, g = .01, t = year),
+         con_extreme = consumption(activity = act_extreme, g = .01, t = year))
+  
+#Plot activity 
+
+ggplot(consumption_time, aes(x = year)) +
+  geom_point(aes(y = act_none, color = "None")) + 
+  geom_point(aes(y = act_moderate, color = "Moderate (T = 2)")) +
+  geom_point(aes(y = act_extreme, color = "Extreme (T = 8)")) +
+  theme_minimal() + 
+  labs(x = "Year",
+       y = "activity",
+       title = "activity Over Time",
        fill = "") 
 
-# Renaming legend isn't working with a bunch of different ways to do it - can maybe just remove 
+``` 
+
+b. Plot consumption over time for no climate change, moderate climate change and extreme climate change. 
+```{r}
+#Plot consumption 
+
+ggplot(consumption_time, aes(x = year)) +
+  geom_point(aes(y = con_none, color = "None")) + 
+  geom_point(aes(y = con_moderate, color = "Moderate (T = 2)" )) +
+  geom_point(aes(y = con_extreme, color = "Extreme (T = 8)")) +
+  theme_minimal() + 
+  labs(x = "Year",
+       y = "Consumption",
+       title = "Economic Activity (Consumption) Over Time",
+       fill = "") +
+    scale_colour_discrete("Climate Change Scenario")
+```
+
+c. Plot undiscounted utility over time for for no climate change, moderate climate change and extreme climate change. 
+
+```{r}
+
+#Plotting utility over time 
+
+utility_time <- consumption_time %>% 
+    mutate(util_none = utility(consumption = con_none, n = 0.5),
+         util_moderate = utility(consumption = con_moderate, n = 0.5),
+         util_extreme = utility(consumption = con_extreme, n = 0.5))
+
+ggplot(utility_time, aes(x = year)) +
+  geom_point(aes(y = util_none, color = "None")) + 
+  geom_point(aes(y = util_moderate, color = "Moderate (T = 2)" )) +
+  geom_point(aes(y = util_extreme, color = "Extreme (T = 8)")) +
+  theme_minimal() + 
+  labs(x = "Year",
+       y = "Utility",
+       title = "Undiscounted Utility Over Time",
+       fill = "")  +
+  scale_colour_discrete("Climate Change Scenario")
 
 ```
+
+
+
 
 ```{r}
 # 2.a
