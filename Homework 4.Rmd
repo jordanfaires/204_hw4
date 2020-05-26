@@ -5,7 +5,7 @@ date: "5/21/2020"
 output: html_document
 ---
 
-1. Plots 
+1. Plotting Temperature, Consumption and Utility 
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -190,10 +190,8 @@ ggplot(utility_time, aes(x = year)) +
        title = "Undiscounted Utility Over Time",
        fill = "")  +
   scale_colour_discrete("Climate Change Scenario")
-
+ 
 ```
-
-
 
 
 ```{r}
