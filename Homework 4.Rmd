@@ -248,7 +248,8 @@ U_4.4_sens_g <- sum(U_disc(r, t = y,
 U_0_sens_g <- sum(U_disc(r, t = y, 
            utility = 
              utility(n, consumption = (consumption(
-               g = (1.1*g)
+               g 
+                #= (1.1*g)
                , t = y, activity = activity(B, temp = temp(t = y, 0)))))))
 
 L_sens_g <- ((L - 
@@ -266,7 +267,8 @@ U_4.4_sens_n <- sum(U_disc(r, t = y,
 U_0_sens_n <- sum(U_disc(r, t = y, 
            utility = 
              utility(
-               n = (1.1*n)
+               n 
+               #= (1.1*n)
                , consumption = (consumption(g, t = y, activity = activity(B, temp = temp(t = y, 0)))))))
 
 L_sens_n <- ((L - 
@@ -284,7 +286,8 @@ U_4.4_sens_B <- sum(U_disc(r, t = y,
 U_0_sens_B <- sum(U_disc(r, t = y, 
            utility = 
              utility(n, consumption = (consumption(g, t = y, activity = activity(
-               B=(1.1*B)
+               B
+               #=(1.1*B)
                , temp = temp(t = y, 0)))))))
 
 L_sens_B <- ((L - 
