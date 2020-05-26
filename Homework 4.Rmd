@@ -160,9 +160,9 @@ U_4.4_sens_T <- sum(U_disc(r, t = y,
                                                                                                   (T*1.1)
                                                                                                 )))))))
 
-L_sens_T <- (L - 
+L_sens_T <- ((L - 
                         ((1 - (U_4.4_sens_T/U_0_disc))*100) # Finding new L w/ 10% change in T
-                  )/L
+                  )/L)*100
 
 # Sensitivity to g (economic growth rate)
 
@@ -178,15 +178,45 @@ U_0_sens_g <- sum(U_disc(r, t = y,
                g = (1.1*g)
                , t = y, activity = activity(B, temp = temp(t = y, 0)))))))
 
-L_sens_g <- (L - 
+L_sens_g <- ((L - 
                         ((1 - (U_4.4_sens_g/U_0_sens_g))*100)
-                  )/L
+                  )/L)*100
 
-# Sensitivity to n ()
+# Sensitivity to n (growth coefficient?)
 
-L_sens_n <- abs((1 - ((utility((1.1*n), consumption = (consumption(g, t, activity = activity(B, temp = temp(t, T))))))/U_4.4)) * 100)
+U_4.4_sens_n <- sum(U_disc(r, t = y, 
+           utility = 
+             utility(
+               n = (1.1*n)
+               , consumption = (consumption(g, t = y, activity = activity(B, temp = temp(t = y, T)))))))
 
-L_sens_B <- abs((1 - ((utility(n, consumption = (consumption(g, t, activity = activity((1.1*B), temp = temp(t, T))))))/U_4.4)) * 100)
+U_0_sens_n <- sum(U_disc(r, t = y, 
+           utility = 
+             utility(
+               n = (1.1*n)
+               , consumption = (consumption(g, t = y, activity = activity(B, temp = temp(t = y, 0)))))))
+
+L_sens_n <- ((L - 
+                        ((1 - (U_4.4_sens_n/U_0_sens_n))*100)
+                  )/L)*100
+  
+# Sensitivity to B (temp coefficient?)
+
+U_4.4_sens_B <- sum(U_disc(r, t = y, 
+           utility = 
+             utility(n, consumption = (consumption(g, t = y, activity = activity(
+               B=(1.1*B)
+               , temp = temp(t = y, T)))))))
+
+U_0_sens_B <- sum(U_disc(r, t = y, 
+           utility = 
+             utility(n, consumption = (consumption(g, t = y, activity = activity(
+               B=(1.1*B)
+               , temp = temp(t = y, 0)))))))
+
+L_sens_B <- ((L - 
+                        ((1 - (U_4.4_sens_B/U_0_sens_B))*100)
+                  )/L)*100
 
 
 ```
