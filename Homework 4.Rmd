@@ -1,21 +1,21 @@
 ---
 title: "ESM 204 Homework 4"
 author: "Jordan Faires and Evan Heberlein"
-date: "5/21/2020"
+date: "5/27/2020"
 output: html_document
 ---
 
-1. Plotting Temperature, Consumption and Utility 
+### 1. Plotting Temperature, Consumption and Utility 
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
 ```
 
-```{r}
+```{r include=FALSE}
 library(tidyverse)
 ```
 
-```{r}
+```{r include=FALSE}
 
 # Setting up variables and functions
 
@@ -193,8 +193,7 @@ ggplot(utility_time, aes(x = year)) +
  
 ```
 
-
-```{r}
+```{r include=FALSE}
 # 2.a
 
 U_disc = function(utility, r, t) {
@@ -237,6 +236,8 @@ L_sens_T <- ((L -
                         ((1 - (U_4.4_sens_T/U_0_disc))*100) # Finding new L w/ 10% change in T
                   )/L)*100
 
+elasticity_T <- (L_sens_T/10)
+
 # Sensitivity to g (economic growth rate)
 
 U_4.4_sens_g <- sum(U_disc(r, t = y, 
@@ -253,8 +254,10 @@ U_0_sens_g <- sum(U_disc(r, t = y,
                , t = y, activity = activity(B, temp = temp(t = y, 0)))))))
 
 L_sens_g <- ((L - 
-                        ((1 - (U_4.4_sens_g/U_0_sens_g))*100)
+                        ((1 - (U_4.4_sens_g/U_0_disc))*100)
                   )/L)*100
+
+elasticity_g <- (L_sens_g/10)
 
 # Sensitivity to n (growth coefficient?)
 
@@ -272,8 +275,10 @@ U_0_sens_n <- sum(U_disc(r, t = y,
                , consumption = (consumption(g, t = y, activity = activity(B, temp = temp(t = y, 0)))))))
 
 L_sens_n <- ((L - 
-                        ((1 - (U_4.4_sens_n/U_0_sens_n))*100)
+                        ((1 - (U_4.4_sens_n/U_0_disc))*100)
                   )/L)*100
+
+elasticity_n <- (L_sens_n/10)
   
 # Sensitivity to B (temp coefficient?)
 
@@ -291,10 +296,18 @@ U_0_sens_B <- sum(U_disc(r, t = y,
                , temp = temp(t = y, 0)))))))
 
 L_sens_B <- ((L - 
-                        ((1 - (U_4.4_sens_B/U_0_sens_B))*100)
+                        ((1 - (U_4.4_sens_B/U_0_disc))*100)
                   )/L)*100
 
-# 2. c
+elasticity_B <- (L_sens_B/10)
+
+# 2. c - all wrong
+
+#amount they would give up (1 - that value)
+
+#theta_star = (npv4.4 / npv0)^(1 / 1- n)
+
+theta_star_star <- (1- (U_4.4_disc/U_0_disc)^(1/(1-n)))*100
 
 cons_4.4 <- consumption(g, t = y, activity = activity(B, temp = temp(t = y, T))) 
 
@@ -304,9 +317,11 @@ cons_0 <- consumption(g, t = y, activity = activity(B, temp = temp(t = y, 0)))
   
 ((cons_0 - cons_4.4)/cons_0)*100
 
+# Right?
+
 theta_star <- max(((cons_0 - cons_4.4)/cons_0)*100)
 
-# 2. d
+# 2. d - wrong
 
 T_u <- ((2*.2)+(4*.5)+(6*.3))
 
@@ -321,5 +336,61 @@ theta_star_T_u <- max(
   ((cons_0 - cons_T_u)/cons_0)*100
   )
 
+# Right?
+
+U_2 <- sum(U_disc(r, t = y, 
+           utility = 
+             utility(n, consumption = (consumption(g, t = y, activity = activity(B, temp = temp(t = y,
+                                                                                                T=2)))))))
+
+U_4 <- sum(U_disc(r, t = y, 
+           utility = 
+             utility(n, consumption = (consumption(g, t = y, activity = activity(B, temp = temp(t = y, 
+                                                                                                T = 4)))))))
+
+U_6 <- sum(U_disc(r, t = y, 
+           utility = 
+             utility(n, consumption = (consumption(g, t = y, activity = activity(B, temp = temp(t = y, 
+                                                                                                T = 6)))))))
+
+U_prob <- ((U_2*.2)+(U_4*.5)+(U_6*.3))
+
+theta_star_star_T_u <- (1- (U_prob/U_0_disc)^(1/(1-n)))*100
 ```
 
+### 2. Analysis
+
+#### 2.a - Calculating present value
+
+The present value of the utility of consumption over the next 200 years under a 4.4$^\circ$C warming scenario is `r U_4.4_disc`. This present value when evaluated with no warming is `r U_0_disc`. These values are given by calculating the utility of consumption using the provided formulas, discounting these values to present values at each year from 0 to 200 according to the formula *V$_0$ = V$_t$/(1+r)^t^* (where *r* is the discount rate - in this case 0.01), and summing these values over the 200 year period. 
+
+*L* - the percent of total discounted utility lost on account of this 4.4$^\circ$C warming compared to the baseline scenario, is `r L`%.
+
+~
+
+#### 2.b - Sensitivity analysis
+
+A sensitivity analysis of various modeling variables was conducted, by simulating a 10% increase in variables *T, g, $\eta$, and $\beta$*.
+
+The percent change in *L* in response to a 10% increase in temperature *T* is `r L_sens_T`% 
+(elasticity of change in *L* to 10% change in *T* ($\epsilon$) = `r elasticity_T`)
+
+The sensitivity of *L* to a 10% increase in  *g* is `r L_sens_g`% ($\epsilon$ = `r elasticity_g`)
+
+The sensitivity of *L* to a 10% increase in  *$\eta$* is `r L_sens_n`% ($\epsilon$ = `r elasticity_n`)
+
+The sensitivity of *L* to a 10% increase in  *$\beta$* is `r L_sens_B`% ($\epsilon$ = `r elasticity_B`)
+
+~
+
+#### 2.c - Calculating $\Theta$^$*$^
+
+In order to find he maximum percentage of consumption that society would be willing to forego to avert a global temperature increase ($\Theta$^$*$^), we must find the value for ($\Theta$) that sets the net present value (NPV) of the utility function for a temperature increase of zero as equal to the NPV of the utility function for a temperature increase of 4.4. In other words the sum of *U($\Theta$ x C$_0$(t))* from *t(0)* to *t(200)* equals *U(C$_4._4$(t))* over the same interval. This can be algebraically simplified to *$\Theta$ = (NPV$_4._4$ / NPV$_0$) ^ (1 / 1 - $\eta$)*. $\Theta$^$*$^ is then given by 1 - $\Theta$. This was solved by inserting previously calculated NPV$_4._4$ and NPV$_0$.
+
+$\Theta$^$*$^ = `r theta_star_star`%
+
+~
+
+#### 2.d - $\Theta$^$*$^ under temperature uncertainty
+
+The expected NPV of this uncertain temperature  scenario is `r U_prob`%. This was found by calculating NPV at temperature increases of 2$^\circ$C, 4$^\circ$C and 6$^\circ$C, and multiplying this by the relative probability of these increases (20%, 50% and 30% respectively). This expected NPV of utility was then used in our equation to calculate $\Theta$^$*$^ under temperature uncertainty, resulting in a $\Theta$^$*$^$_U$ of `r theta_star_star_T_u`%.
